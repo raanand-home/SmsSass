@@ -1,0 +1,13 @@
+version: '2'
+services:
+  web:
+    build: web-app/.
+    ports:
+     - "5000:5000"
+    environment:
+      - SMS_API_KEY=api_key
+      - SMS_API_SECRET=api_secret
+  redis:
+    image: "redis:alpine"
+    expose:
+      - "6379"

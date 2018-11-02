@@ -1,0 +1,18 @@
+version: '2'
+services:
+  web:
+    build: ../web-app/.
+    ports:
+     - "5000:5000"
+    environment:
+      - SMS_API_KEY=api_key
+      - SMS_API_SECRET=api_secret
+      - SMS_SERVICE_URL=http://mock-sms-service:5002/sms/json
+  mock-sms-service:
+    build: ../mock-sms-service/.
+    ports:
+     - "5002:5002"
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
