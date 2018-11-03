@@ -1,6 +1,8 @@
 
 import jwt
 import datetime
+import os
+from hashlib import sha256
 from functools import wraps
 import flask
 import dateutil.parser
@@ -9,6 +11,16 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 from api import app
+
+PASSES = 32768
+
+def gen_hash(data, salt=None):
+    salt = salt or os.urandom(16)
+    comp = salt + data.encode('utf-8')
+    out = sha256(comp).digest()
+    for i in xrange(PASSES - 1):
+        out = sha256(out + comp).digest()
+    return salt, out
 
 
 def encode_data(data, timeout):

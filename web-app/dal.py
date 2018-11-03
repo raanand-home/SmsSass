@@ -1,12 +1,13 @@
 import rom
-import os
-from hashlib import sha256
+
 from rom import UniqueKeyViolation
 from flask import abort
 from redis import StrictRedis
 from redis_lock import Lock
 import config
 from contextlib import contextmanager
+from utils import gen_hash
+
 rom.util.set_connection_settings(
     host=config.REDIS_HOST,
     port=config.REDIS_PORT)
@@ -26,16 +27,8 @@ class Users(rom.Model):
     balance = rom.Float()
 
 
-PASSES = 32768
 
 
-def gen_hash(password, salt=None):
-    salt = salt or os.urandom(16)
-    comp = salt + password.encode('utf-8')
-    out = sha256(comp).digest()
-    for i in xrange(PASSES - 1):
-        out = sha256(out + comp).digest()
-    return salt, out
 
 
 def add_user(email, password):

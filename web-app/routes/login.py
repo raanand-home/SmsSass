@@ -3,8 +3,8 @@ from flask_restplus import Resource
 from models import login_info, auth_info
 import flask
 from flask_jwt_extended import create_refresh_token
-from utils import verify_user
-from dal import get_user, gen_hash
+from utils import verify_user, gen_hash
+from dal import get_user
 
 
 @api.route('/login')

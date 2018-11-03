@@ -11,9 +11,11 @@ from dal import add_user, get_user
 from utils import (verify_user,
                    encode_data,
                    decode_data_and_verify,
+                   gen_hash
                    )
 import sms
-import hashlib
+import base64
+
 random.seed()
 
 
@@ -51,8 +53,11 @@ class PhoneVerificationRequest(Resource):
             '-' + str(random.randint(100, 999))
         sms.send(api.payload['phone_number'],
                  "Verification Code:" + verification_code)
+        salt, hash = gen_hash(verification_code)
         request_token = encode_data(
-            {'code_sha256': hashlib.sha256(verification_code).hexdigest(),
+            {'code': {
+                'sha256': base64.urlsafe_b64encode(hash),
+                'salt': base64.urlsafe_b64encode(salt)},
              'phone_number': api.payload['phone_number']},
             datetime.timedelta(minutes=5))
         return {'request_token': request_token}
@@ -69,8 +74,11 @@ class PhoneVerificationVerification(Resource):
     @verify_user
     def post(self, user):
         encoded_data = decode_data_and_verify(api.payload['request_token'])
-        if encoded_data['code_sha256'] != hashlib.sha256(
-                api.payload['verification_code']).hexdigest():
+        hash = gen_hash(api.payload['verification_code'],
+                        base64.urlsafe_b64decode(
+                            str(encoded_data['code']['salt'])))[1]
+        if base64.urlsafe_b64decode(
+                str(encoded_data['code']['sha256'])) != hash:
             return "verification code doesn't match", 400
         user_obj = get_user(email=user['email'])
         user_obj.phone_number = encoded_data['phone_number'].encode('utf-8')
