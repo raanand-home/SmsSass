@@ -13,7 +13,7 @@ functools32==3.2.3.post2
 idna==2.7
 ipaddress==1.0.22
 itsdangerous==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 jsonschema==2.6.0
 MarkupSafe==1.0
 py-bcrypt==0.4
