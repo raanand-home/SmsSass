@@ -19,7 +19,7 @@ MarkupSafe==1.0
 py-bcrypt==0.4
 pycparser==2.19
 pycryptodome==3.7.0
-PyJWT==1.6.4
+PyJWT==2.4.0
 python-dateutil==2.7.5
 python-redis-lock==3.2.0
 pytz==2018.7
